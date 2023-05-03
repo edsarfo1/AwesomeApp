@@ -1,5 +1,6 @@
-import React, {useState} from 'react';
-import {View, Text, TextInput, Button, StyleSheet} from 'react-native';
+import {View, Text, TextInput, Button, StyleSheet, Modal} from 'react-native';
+import {useAsyncStorage} from '@react-native-async-storage/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function UserInfo(props) {
   const [fields, setFields] = useState({
@@ -8,7 +9,11 @@ function UserInfo(props) {
     age: '',
   });
 
-  const [showResult, setShowResult] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+
+  useEffect(() => {
+    console.log('Text updated:', fields);
+  }, [fields]);
 
   const styles = StyleSheet.create({
     container: {
@@ -31,12 +36,48 @@ function UserInfo(props) {
     result: {
       marginTop: 20,
     },
+    modalContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    modalContent: {
+      backgroundColor: 'white',
+      padding: 20,
+      borderRadius: 10,
+      alignItems: 'center',
+    },
   });
 
   function handleFieldChange(name, text) {
-    console.log('test');
+    // console.log('test');
     setFields({...fields, [name]: text});
   }
+
+  const onStoreDataPress = useCallback(async UserObject => {
+    try {
+      const userObjectStringified = JSON.stringify(UserObject);
+      await AsyncStorage.setItem('userObjectStr', userObjectStringified);
+      console.log('Data saved');
+    } catch (error) {
+      console.log('Error', error);
+    }
+  }, []);
+
+  const onRetrieveDataPress = useCallback(async () => {
+    try {
+      const userObjectStringified = await AsyncStorage.getItem('userObjectStr');
+      if (userObjectStringified) {
+        const UserObject = JSON.parse(userObjectStringified);
+        setFields(UserObject);
+        console.log('Data found');
+      } else {
+        console.log('No data found');
+      }
+    } catch (error) {
+      console.log('Error', error);
+    }
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -63,18 +104,26 @@ function UserInfo(props) {
         value={fields.age}
         inputMode="numeric"
       />
+      <Button title="Submit Data" onPress={onStoreDataPress} />
+      <Button title="Retrieve Data" onPress={onRetrieveDataPress} />
+      {/* <Button title="Submit" onPress={() => setShowModal(true)} /> */}
 
-      <Button
-        title="Submit"
-        onPress={() => setShowResult(currentResult => !currentResult)}
-      />
+      <Modal
+        visible={showModal}
+        animationType="fade"
+        transparent={true}
+        onRequestClose={() => setShowModal(false)}>
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.result}>
+              Your name is {fields.firstName} {fields.lastName}. You are{' '}
+              {fields.age} years old.
+            </Text>
+            <Button title="close" onPress={() => setShowModal(false)} />
+          </View>
+        </View>
+      </Modal>
 
-      {showResult && (
-        <Text style={styles.result}>
-          Your name is {fields.firstName} {fields.lastName}. You are{' '}
-          {fields.age} years old.
-        </Text>
-      )}
       <Button
         title="Go back to first screen in stack"
         onPress={() => props.navigation.popToTop()}
@@ -83,4 +132,4 @@ function UserInfo(props) {
   );
 }
 
-export default UserInfo;
+export default React.memo(UserInfo);

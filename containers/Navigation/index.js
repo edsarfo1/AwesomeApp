@@ -5,6 +5,7 @@ import HomeScreen from '../HomeScreen';
 import UserInfo from '../UserInfo';
 import FlatListDemo from '../FlatListDemo';
 import Image from '../FastImage';
+import UserDetailsFunct from '../UserDetailsFunct';
 
 // import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 
