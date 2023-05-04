@@ -1,3 +1,4 @@
+import React, {useState, useEffect, useCallback} from 'react';
 import {View, Text, TextInput, Button, StyleSheet, Modal} from 'react-native';
 import {useAsyncStorage} from '@react-native-async-storage/async-storage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -9,57 +10,28 @@ function UserInfo(props) {
     age: '',
   });
 
-  const [showModal, setShowModal] = useState(false);
-
   useEffect(() => {
-    console.log('Text updated:', fields);
+    console.log(fields);
   }, [fields]);
 
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-    },
-    title: {
-      fontSize: 30,
-      fontWeight: 'bold',
-      marginBottom: 20,
-    },
-    input: {
-      height: 40,
-      margin: 12,
-      borderWidth: 1,
-      padding: 10,
-      width: '80%',
-    },
-    result: {
-      marginTop: 20,
-    },
-    modalContainer: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-    },
-    modalContent: {
-      backgroundColor: 'white',
-      padding: 20,
-      borderRadius: 10,
-      alignItems: 'center',
-    },
-  });
+  const [showModal, setShowModal] = useState(false);
+
+  // useEffect(() => {
+  //   console.log('Text updated:', fields);
+  // }, [fields]);
 
   function handleFieldChange(name, text) {
-    // console.log('test');
     setFields({...fields, [name]: text});
   }
 
-  const onStoreDataPress = useCallback(async UserObject => {
+  const onStoreDataPress = useCallback(async () => {
     try {
-      const userObjectStringified = JSON.stringify(UserObject);
+      const {firstName, lastName, age} = fields;
+      const userObjectStringified = JSON.stringify({firstName, lastName, age});
+
       await AsyncStorage.setItem('userObjectStr', userObjectStringified);
       console.log('Data saved');
-    } catch (error) {
+    } catch (e) {
       console.log('Error', error);
     }
   }, []);
@@ -74,7 +46,7 @@ function UserInfo(props) {
       } else {
         console.log('No data found');
       }
-    } catch (error) {
+    } catch (e) {
       console.log('Error', error);
     }
   }, []);
@@ -133,3 +105,37 @@ function UserInfo(props) {
 }
 
 export default React.memo(UserInfo);
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  title: {
+    fontSize: 30,
+    fontWeight: 'bold',
+    marginBottom: 20,
+  },
+  input: {
+    height: 40,
+    margin: 12,
+    borderWidth: 1,
+    padding: 10,
+    width: '80%',
+  },
+  result: {
+    marginTop: 20,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+});
