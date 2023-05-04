@@ -24,19 +24,19 @@ function UserInfo(props) {
     setFields({...fields, [name]: text});
   }
 
-  const onStoreDataPress = useCallback(async () => {
+  const onStoreDataPress = () => {
     try {
       const {firstName, lastName, age} = fields;
       const userObjectStringified = JSON.stringify({firstName, lastName, age});
 
-      await AsyncStorage.setItem('userObjectStr', userObjectStringified);
+      AsyncStorage.setItem('userObjectStr', userObjectStringified);
       console.log('Data saved');
     } catch (e) {
       console.log('Error', error);
     }
-  }, []);
+  };
 
-  const onRetrieveDataPress = useCallback(async () => {
+  const onRetrieveDataPress = async () => {
     try {
       const userObjectStringified = await AsyncStorage.getItem('userObjectStr');
       if (userObjectStringified) {
@@ -49,7 +49,7 @@ function UserInfo(props) {
     } catch (e) {
       console.log('Error', error);
     }
-  }, []);
+  };
 
   return (
     <View style={styles.container}>
