@@ -13,8 +13,11 @@ import Navigation from './containers/Navigation';
 import FlatListDemo from './containers/FlatListDemo';
 // import MyTabs from './containers/Navigation';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import {LocationHelper} from './src/helpers';
 
 const App = () => {
+  LocationHelper.startLocationTracking();
+
   return <Navigation />;
 };
 
